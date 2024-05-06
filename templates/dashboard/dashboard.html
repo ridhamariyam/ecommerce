@@ -1,0 +1,42 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %} Dashboard {% endblock %}
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-x2Gm/Z10b8DszbrFV+fa2aIyPr3cVndJcXpib8bsKfiTQ7ipkKh9e1z71C3Xv4U5" crossorigin="anonymous">
+
+<div class="container">
+    <h1 class="mt-4">Welcome to the Admin Dashboard</h1>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title"><i class="fas fa-dollar-sign"></i> Total Sales</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Display total sales amount here.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="card-title"><i class="fas fa-clipboard-list"></i> Pending Orders</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Display number of pending orders here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <a href="#" class="btn btn-success"><i class="fas fa-download"></i> Download Report</a>
+        </div>
+    </div>
+    
+</div>
+{% endblock content %}

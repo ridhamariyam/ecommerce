@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Your Shopping Cart</h1>
+    {% if cart_items %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item.product.title }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ item.product.price }}</td>
+                <td>${{ item.total }}</td>
+                <td>
+                    <form action="{% url 'update_cart' item.product.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                    </form>
+                    {% comment %} <button type="button" class="btn btn-sm btn-danger" onclick="confirmRemove({{ item.product.id }})">Remove</button> {% endcomment %}
+                    <form id="remove-form-{{ item.product.id }}" action="{% url 'remove_from_cart' item.product.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                    </form>
+                    
+                </td>
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="text-right">
+        <h4>Total Price: ${{ total_price }}</h4>
+        <a href="{% url 'select_address' %}" class="btn btn-primary">Proceed to Checkout</a>  
+    </div>
+    {% else %}
+    <p>Your cart is empty.</p>
+    {% endif %}
+</div>
+<script>
+    function confirmRemove(productId) {
+        if (confirm('Are you sure you want to remove this item from the cart?')) {
+            document.getElementById('remove-form-' + productId).submit();
+        }
+    }
+</script>
+{% endblock %}

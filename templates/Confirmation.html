@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Confirmation{% endblock %}
+
+{% block content %}
+    <style>
+        /* CSS styles for the confirmation page */
+        
+        .inner-container {
+            background-color: #fff; /* Set background color for the inner container */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border: 2px solid #ddd; /* Set border thickness and color */
+        }
+        
+        .checkmark {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%; /* Make it a circle */
+            background-color: green; /* Apply green color to the checkmark circle */
+            margin: 0 auto 20px; /* Center and add bottom margin */
+        }
+        .checkmark::before {
+            content: '\2713'; /* Unicode character for checkmark */
+            font-size: 48px; /* Adjust size of checkmark */
+            color: white; /* Apply white color to checkmark */
+        }
+        .order-items-box {
+            background-color: #f9f9f9; /* Background color for the box */
+            padding: 20px; /* Padding around the box */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Shadow effect */
+            margin-bottom: 20px; /* Add bottom margin */
+            border: 2px solid #ddd; /* Set border thickness and color */
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            justify-content: space-between; /* Align items in each list item */
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        img {
+            width: 100px;
+            height: 100px;
+            margin-right: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        p {
+            margin: 0;
+        }
+        .address {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #ddd; /* Set border thickness and color */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .invoice {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+
+    <div class="main">
+        <div class="container">
+            <div class="inner-container">
+                <div class="checkmark"></div> <!-- Checkmark inside a circle -->
+                <h2 style="text-align: center;">Thank You for Your Order</h2> <!-- Center the text -->
+                
+                <!-- Order Items Box -->
+                <div class="order-items-box">
+                    <ul>
+                        {% for item in order_items %}
+                            <li>
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}">
+                                <p>{{ item.product.title }}</p>
+                                <div>
+                                    <p><strong>X</strong> {{ item.quantity }}</p>
+                                </div>
+                                <p>₹{{ item.product.price }}</p> <!-- Product price on the right side -->
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <!-- Displaying Address -->
+                {% if selected_address %}
+                    <div class="address">
+                        <h4>Shipping Address:{{ selected_address.street_address }},{{ selected_address.city }}, {{ selected_address.country }}</h4>
+                        <p>We will send you a confirmation message to your email</p>
+                    </div>
+                {% endif %}
+                
+                <!-- Displaying Invoice Number and Total Amount -->
+                <div class="invoice">
+                    <h2>Invoice Number: {{ invoice_number }}</h2>
+                  
+                    <h2>Total Amount: ₹{{ total_amount }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+{% endblock %}
