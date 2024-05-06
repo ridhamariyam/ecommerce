@@ -20,6 +20,8 @@ def product_list(request):
     return render(request, 'product_list.html', {'products': products, 'categories': categories})
 
 
+
+
 def product_details(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     return render(request, 'product_detail.html', {'product': product})
@@ -32,6 +34,16 @@ def add_to_cart(request, product_id):
         cart_item.quantity += 1
         cart_item.save()
     return redirect('product_list')
+
+
+
+#-------------cart--------------------
+
+@login_required
+def view_cart(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
 
 @login_required
 def update_cart(request, product_id):
@@ -52,11 +64,6 @@ def remove_from_cart(request, product_id):
         cart_item.delete()
     return redirect('view_cart')
 
-@login_required
-def view_cart(request):
-    cart_items = CartItem.objects.filter(user=request.user)
-    total_price = sum(item.product.price * item.quantity for item in cart_items)
-    return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
 
 
 def select_address_view(request):

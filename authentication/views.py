@@ -3,6 +3,7 @@ from ecommerce_app.models import *
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as django_logout
 from .models import Address
 
 
@@ -31,3 +32,7 @@ def login(request):
     else:
         form = AuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})
+
+def logout(request):
+    django_logout(request)
+    return redirect('login')

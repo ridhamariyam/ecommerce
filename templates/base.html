@@ -10,11 +10,12 @@
         /* General styling */
         nav {
             background-color: #222b40;
-            height: 100px;
+            height: 80px;
             padding: 0 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
         }
         
         .navbar-content ul {
@@ -51,31 +52,50 @@
             background-color: white;
             color: #222b40;
         }
-    
-        /* Responsive styling */
-        @media screen and (max-width: 768px) {
-            nav {
-                height: auto;
-                padding: 10px 20px;
-            }
-    
-            .navbar-content {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-    
-            .navbar-content ul li {
-                margin-right: 0;
-                margin-bottom: 5px;
-            }
-    
-            .navbar-content ul li:last-child {
-                margin-bottom: 0;
-            }
-    
-            .navbar-content ul li button {
-                padding: 8px 16px;
-            }
+
+        /* Footer styling */
+footer {
+    background-color: #222b40;
+    color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+    width: auto; /* Set width to auto */
+}
+
+.footer-content {
+    display: inline-block;
+}
+
+.footer-links {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.footer-links li {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.footer-links li:last-child {
+    margin-right: 0;
+}
+
+.footer-links li a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+        /* Wrapper for main content and footer */
+        .wrapper {
+            min-height: calc(100vh - 80px); /* Set min-height to viewport height minus navbar height */
+            position: relative;
+        }
+        
+        /* Adjust container padding for responsiveness */
+        .container {
+            padding-top: 20px;
+            padding-bottom: 20px; /* Adjust as needed */
         }
     </style> 
 </head>
@@ -87,24 +107,43 @@
                 <li><a href="{% url "home" %}">Home</a></li>
                 <li><a href="{% url "product_list" %}">Shop</a></li>
                 <li><a href="#">My Account</a></li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'view_cart' %}"><i class="fas fa-shopping-cart"></i></a> 
-                </li>
-                <li><button>Book Now</button></li>
+                <li><a href="{% url 'view_cart' %}"><i class="fas fa-shopping-cart"></i></a></li> 
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'logout' %}"><button>Logout</button></a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}"><button>Login</button></a></li>
+                {% endif %}
             </ul>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        {% block content %}
-        {% endblock %}
+    <div class="wrapper">
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
     </div>
+
+    <footer>
+        <div class="container footer-content">
+            <ul class="footer-links">
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact Us</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+            </ul>
+            <div>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p>&copy; 2024 AquaAura. All Rights Reserved.</p>
+        </div>
+    </footer>
+    
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
-
-
-

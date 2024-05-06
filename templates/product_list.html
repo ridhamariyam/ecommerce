@@ -28,15 +28,7 @@
                     </div>
                     
                     <!-- Price filter -->
-                    <div class="form-group">
-                        <label for="price">Price</label>
-                        <select class="form-control" id="price">
-                            <option>All</option>
-                            <option>Below ₹1000</option>
-                            <option>Above ₹1000</option>
-                            <!-- Add more price ranges as needed -->
-                        </select>
-                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -46,7 +38,7 @@
         <div class="col-md-9">
             <div class="row">
                 {% for product in products %}
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4 product-card" data-category="{{ product.category }}">
                     <div class="card">
                         <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}">
                         <div class="card-body">
@@ -69,4 +61,27 @@
         
     </div>
 </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var categorySelect = document.getElementById('category');
+        var products = document.querySelectorAll('.product-card');
+
+        categorySelect.addEventListener('change', function() {
+            var selectedCategory = categorySelect.value;
+
+            products.forEach(function(product) {
+                var productCategory = product.getAttribute('data-category');
+
+                if (selectedCategory === 'All' || productCategory === selectedCategory) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+
 {% endblock %}
