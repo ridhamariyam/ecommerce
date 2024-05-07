@@ -20,6 +20,12 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+     
+    def available_quantity(self):
+        return self.quantity_available - sum(order_item.quantity for order_item in self.orderitem_set.all())
+    
+    def is_available(self):
+        return self.available_quantity() > 0
     
 class CartItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

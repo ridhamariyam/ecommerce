@@ -5,6 +5,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.http import JsonResponse
 from django.db.models import Q
 
+
 # Create your views here.
 def dashboard(request):
     return render(request, 'dashboard/dashboard.html')
@@ -75,3 +76,58 @@ def search_and_filter_orders(request):
         'orders': orders
     }
     return render(request, 'order.html', context)
+
+
+import csv
+from django.shortcuts import render
+from django.http import HttpResponse
+from .tasks import generate_order_report
+from django.core.mail import EmailMessage
+from io import StringIO
+
+
+def export_order_report(request):
+    email_address = request.GET.get('email')
+
+    if not email_address:
+        return JsonResponse({'error': 'No email address provided.'}, status=400)
+
+    orders = Order.objects.all()
+    header = ['Invoice Number', 'User', 'Total Price', 'Status', 'Created At', 'Payment Method', 'Invoice Date']
+
+    with StringIO() as buffer:
+        writer = csv.writer(buffer)
+        writer.writerow(header)
+        for order in orders:
+            row = [
+                order.invoice_number,
+                order.user.username if order.user else "",
+                order.total_price,
+                order.status,
+                order.created_at,
+                order.payment_method,
+                order.invoice_date
+            ]
+            writer.writerow(row)
+
+        # Create an EmailMessage object
+        email = EmailMessage(
+            subject='Order Report',
+            body='Please find attached the order report.',
+            to=[email_address],
+        )
+
+        # Attach the CSV file to the email
+        email.attach('order_report.csv', buffer.getvalue(), 'text/csv')
+
+        # Send the email
+        email.send()
+
+        # Return a JSON response indicating success
+        response_data = {'success': True}
+
+        # Create an HTTP response to serve the CSV file as a download
+        csv_response = HttpResponse(buffer.getvalue(), content_type='text/csv')
+        csv_response['Content-Disposition'] = 'attachment; filename="order_report.csv"'
+
+        return JsonResponse(response_data)

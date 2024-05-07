@@ -54,24 +54,45 @@
             background-color: #0056b3;
         }
 
+        .error-box {
+            border: 1px solid red;
+            border-radius: 3px;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #f8d7da; /* Light red background */
+        }
+
         .error-message {
             color: red;
-            margin-bottom: 15px;
+            margin: 0;
         }
+        
     </style>
 </head>
 <body>
     <div class="login-container">
         <h2>Login</h2>
-        <form method="post">
+        <form id="login-form" method="post">
             {% csrf_token %}
             {% if form.non_field_errors %}
-                <p class="error-message">{{ form.non_field_errors }}</p>
+                <div id="error-box" class="error-box">
+                    <p id="error-message" class="error-message">Invalid username or password. Please try again.</p>
+                </div>
             {% endif %}
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Login</button>
         </form>
     </div>
+
+    <script>
+     
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            var errorBox = document.getElementById('error-box');
+            if (errorBox) {
+                errorBox.remove();
+            }
+        });
+    </script>
 </body>
 </html>

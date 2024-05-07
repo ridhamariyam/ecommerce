@@ -12,7 +12,7 @@
                 <th>Product</th>
                 <th>Quantity</th>
                 <th>Price</th>
-                <th>Total</th>
+               
                 <th>Actions</th>
             </tr>
         </thead>
@@ -22,20 +22,19 @@
                 <td>{{ item.product.title }}</td>
                 <td>{{ item.quantity }}</td>
                 <td>${{ item.product.price }}</td>
-                <td>${{ item.total }}</td>
+                
                 <td>
                     <form action="{% url 'update_cart' item.product.id %}" method="post" class="d-inline">
                         {% csrf_token %}
-                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.available_quantity }}" onchange="updateQuantity(this)">
                         <button type="submit" class="btn btn-sm btn-primary">Update</button>
                     </form>
-                    {% comment %} <button type="button" class="btn btn-sm btn-danger" onclick="confirmRemove({{ item.product.id }})">Remove</button> {% endcomment %}
                     <form id="remove-form-{{ item.product.id }}" action="{% url 'remove_from_cart' item.product.id %}" method="post" class="d-inline">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-sm btn-danger">Remove</button>
                     </form>
-                    
                 </td>
+                
                 
             </tr>
             {% endfor %}
@@ -56,4 +55,5 @@
         }
     }
 </script>
+
 {% endblock %}

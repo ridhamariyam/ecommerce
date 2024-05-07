@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'ecommerce_app',
     'authentication',
     'dashboard',
+    'django_celery_results',
+    'django_celery_beat',
+
 ]
 
 MIDDLEWARE = [
@@ -73,6 +76,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ecommerce_project.wsgi.application'
+
+
 
 
 # Database
@@ -119,6 +124,15 @@ USE_L10N = True
 USE_TZ = True
 
 
+EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER= 'ridhamariyam44@gmail.com'
+EMAIL_HOST_PASSWORD= 'bnzembcsnalyjlih'
+# EMAIL_HOST_PASSWORD= 'fjtrusfpeljaktal'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
@@ -128,6 +142,9 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
+LOGIN_URL = 'login'
+
+
 MEDIA_URL = '/media/'  # Change this to the correct URL path for serving media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -135,3 +152,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# CELERY SETTINGS 
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Kolkata'
+
+# Celery Beat Configuration
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
