@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'dashboard',
     'django_celery_results',
     'django_celery_beat',
+    'xhtml2pdf',
+    
 
 ]
 

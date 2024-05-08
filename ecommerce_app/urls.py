@@ -11,7 +11,9 @@ urlpatterns = [
     path('cart/remove/<int:product_id>/', remove_from_cart, name='remove_from_cart'),
      path('select-address/', select_address_view, name='select_address'),
      path('select-payment/', select_payment_view, name='select_payment'),
+     path('view_account/', view_account, name='view_account'),
      path('place_order/', place_order, name='place_order'),
     path('confirmation/<str:invoice_number>/',confirmation, name='confirmation'),
+     path('generate_pdf_invoice/<str:invoice_number>/', generate_pdf_invoice, name='generate_pdf_invoice'),
     # path('checkout/', checkout, name='checkout'),
 ]

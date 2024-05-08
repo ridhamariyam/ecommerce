@@ -70,14 +70,27 @@
             display: flex;
             justify-content: space-between;
         }
+
+        .btn-download {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+          }
+          .btn-download:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+          }
     </style>
 
     <div class="main">
         <div class="container">
             <div class="inner-container">
+                <a href="{% url 'generate_pdf_invoice' invoice_number %}" download class="btn btn-download btn-sm">Download Invoice</a>
+
                 <div class="checkmark"></div> <!-- Checkmark inside a circle -->
                 <h2 style="text-align: center;">Thank You for Your Order</h2> <!-- Center the text -->
-                
+
+
                 <!-- Order Items Box -->
                 <div class="order-items-box">
                     <ul>

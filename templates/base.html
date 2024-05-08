@@ -107,7 +107,7 @@ footer {
             <ul>
                 <li><a href="{% url "home" %}">Home</a></li>
                 <li><a href="{% url "product_list" %}">Shop</a></li>
-                <li><a href="#">My Account</a></li>
+                <li><a href="{% url "view_account"%}">My Account</a></li>
                 <li><a href="{% url 'view_cart' %}"><i class="fas fa-shopping-cart"></i></a></li> 
                 {% if user.is_authenticated %}
                 <li><a href="{% url 'logout' %}"><button>Logout</button></a></li>

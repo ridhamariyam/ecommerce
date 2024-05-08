@@ -8,6 +8,15 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 import random
 from django.db.models import Count
+from django.http import HttpResponse
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from io import BytesIO
+
 
 # Create your views here.
 
@@ -200,9 +209,86 @@ def confirmation(request, invoice_number):
         return render(request, 'confirmation.html', {'order_items': order_items, 'selected_address': selected_address, 'invoice_number': invoice_number, 'total_amount': total_amount})
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
-        return redirect('view_cart')  
+        return redirect('view_cart') 
 
 def generate_invoice_number():
     return ''.join(random.choices('ABCDEFGHIJK0123456789', k=4))
 
 
+# def generate_pdf_invoice(request, invoice_number):
+#     try:
+#         order = Order.objects.get(invoice_number=invoice_number)
+#         order_items = OrderItem.objects.filter(order=order)
+
+#         response = HttpResponse(content_type='application/pdf')
+#         response['Content-Disposition'] = f'attachment; filename="invoice_{invoice_number}.pdf"'
+
+#         doc = SimpleDocTemplate(response, pagesize=letter)
+#         elements = []
+
+#         # Add more fields from the Order model
+#         data = [['Invoice Number', 'Total Price', 'Status', 'Created At', 'Payment Method', 'Invoice Date']]
+#         data.append([
+#             order.invoice_number,
+#             str(order.total_price),
+#             order.status,
+#             str(order.created_at),
+#             order.payment_method,
+#             str(order.invoice_date)
+#         ])
+
+#         # Add order items
+#         data.append(['Product', 'Quantity', 'Price'])
+#         for item in order_items:
+#             data.append([item.product.title, str(item.quantity), str(item.price_at_purchase)])
+
+#         table = Table(data)
+#         table.setStyle(TableStyle([
+#             ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),  # Header background color
+#             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Header text color
+#             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+#             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+#             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+#             ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+#             ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Add grid lines
+#         ]))
+
+#         elements.append(table)
+#         doc.build(elements)
+#         return response
+#     except Exception as e:
+#         messages.error(request, f"An error occurred: {str(e)}")
+#         return redirect('view_cart')
+
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+
+def generate_pdf_invoice(request, invoice_number):
+    try:
+        order = Order.objects.get(invoice_number=invoice_number)
+        order_items = OrderItem.objects.filter(order=order)
+
+        # Render HTML template to string
+        context = {
+            'order': order,
+            'order_items': order_items,
+        }
+        html_string = render_to_string('invoice_template.html', context)
+
+        # Generate PDF from HTML string
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="invoice_{invoice_number}.pdf"'
+
+        pisa_status = pisa.CreatePDF(html_string, dest=response)
+        if pisa_status.err:
+            return HttpResponse('PDF generation error: %s' % pisa_status.err)
+
+        return response
+    except Exception as e:
+        messages.error(request, f"An error occurred: {str(e)}")
+        return redirect('view_cart')
+    
+    
+def view_account(request):
+    return render(request, 'my_account.html')

@@ -4,6 +4,12 @@ from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from django.http import JsonResponse
 from django.db.models import Q
+import csv
+from django.shortcuts import render
+from django.http import HttpResponse
+from .tasks import generate_order_report
+from django.core.mail import EmailMessage
+from io import StringIO
 
 
 # Create your views here.
@@ -78,14 +84,6 @@ def search_and_filter_orders(request):
     return render(request, 'order.html', context)
 
 
-import csv
-from django.shortcuts import render
-from django.http import HttpResponse
-from .tasks import generate_order_report
-from django.core.mail import EmailMessage
-from io import StringIO
-
-
 def export_order_report(request):
     email_address = request.GET.get('email')
 
@@ -110,23 +108,20 @@ def export_order_report(request):
             ]
             writer.writerow(row)
 
-        # Create an EmailMessage object
         email = EmailMessage(
             subject='Order Report',
             body='Please find attached the order report.',
             to=[email_address],
         )
 
-        # Attach the CSV file to the email
+        # Attaching the CSV file to the email
         email.attach('order_report.csv', buffer.getvalue(), 'text/csv')
-
-        # Send the email
         email.send()
 
-        # Return a JSON response indicating success
+        # Returning a JSON response indicating success
         response_data = {'success': True}
 
-        # Create an HTTP response to serve the CSV file as a download
+        # Creating an HTTP response to serve the CSV file as a download
         csv_response = HttpResponse(buffer.getvalue(), content_type='text/csv')
         csv_response['Content-Disposition'] = 'attachment; filename="order_report.csv"'
 
