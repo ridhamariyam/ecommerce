@@ -120,10 +120,10 @@ p {
     padding: 20px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 400px; /* Set desired height */
+    height: 600px; /* Set desired height */
     width: 400px; /* Set desired width */
 }
-
+]
 .product-image {
     max-width: 200px;
     max-height: 200px; /* Set desired max-height for the image */
@@ -163,19 +163,19 @@ p {
     <br/>
     <h2 class="text-center mb-4">Latest Products</h2>
     <div class="container" style="margin-left: 50px;">
-        <div class="row">
-            {% for product in products %}
-            <div class="col-md-4 mb-4" style="margin-bottom: 20px;"> <!-- Add inline style for margin-bottom -->
-                <div class="product-card">
-                    <img src="{{ product.image.url }}" alt="{{ product.title }}" class="product-image">
-                    <h4 class="mt-2">{{ product.title }}</h4>
-                    <p>{{ product.description }}</p>
-                    <a href="{% url 'product_detail' product.id %}" class="btn btn-primary">View</a>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
+      <div class="row">
+          {% for product in products %}
+          <div class="col-md-4 mb-4">
+              <div class="product-card">
+                  <img src="{{ product.image.url }}" alt="{{ product.title }}" class="product-image">
+                  <h4 class="mt-2">{{ product.title }}</h4>
+                  <p>{{ product.description }}</p>
+                  <a href="{% url 'product_detail' product.id %}" class="btn btn-primary">View</a>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
     
 
 

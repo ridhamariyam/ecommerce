@@ -10,19 +10,44 @@ from django.http import HttpResponse
 from .tasks import generate_order_report
 from django.core.mail import EmailMessage
 from io import StringIO
+from authentication.models import Address
+from django.contrib import messages
 
 
 # Create your views here.
 def dashboard(request):
     return render(request, 'dashboard/dashboard.html')
 
-def order_listing(request):
-    order = Order.objects.all()
-    print(order,'ppppp')
+
+def product_listing(request):
+    categories = Category.objects.all() 
+    products = Product.objects.all()
     context = {
-        'orders': order
+        'products': products,
+        'categories': categories
     }
-    return render(request, 'dashboard/order.html',context)
+    return render(request, 'dashboard/products.html', context)
+
+
+def order_listing(request):
+    search_query = request.GET.get('q')
+    if search_query:
+        orders = Order.objects.filter(
+            Q(invoice_number__icontains=search_query) | 
+            Q(user__username__icontains=search_query)
+        )
+    else:   
+        orders = Order.objects.all()
+    
+ 
+    if not orders.exists() and search_query:
+        orders = Order.objects.all()
+    
+    context = {
+        'orders': orders
+    }
+    return render(request, 'dashboard/order.html', context)
+
 
 def update_order_status(request):
     if request.method == 'POST':
@@ -56,32 +81,7 @@ def get_order_details(request, order_id):
     }
     return JsonResponse(order_data)
 
-def search_and_filter_orders(request):
-    query = request.GET.get('q')
-    filter_option = request.GET.get('filter')
-    sort_option = request.GET.get('sort')
 
-    orders = Order.objects.all()
-
-    if query:
-        orders = orders.filter(
-            Q(invoice_number__icontains=query) |
-            Q(id__icontains=query) |
-            Q(user__username__icontains=query)
-        )
-
-    if filter_option == 'completed':
-        orders = orders.filter(status='completed')
-
-    if sort_option == 'asc':
-        orders = orders.order_by('invoice_number')
-    elif sort_option == 'desc':
-        orders = orders.order_by('-invoice_number')
-
-    context = {
-        'orders': orders
-    }
-    return render(request, 'order.html', context)
 
 
 def export_order_report(request):
@@ -126,3 +126,38 @@ def export_order_report(request):
         csv_response['Content-Disposition'] = 'attachment; filename="order_report.csv"'
 
         return JsonResponse(response_data)
+    
+    
+def users_list(request):
+ 
+    users_with_addresses = Address.objects.select_related('user').all()
+    
+    context = {
+        'users': users_with_addresses
+    }
+    return render(request, 'dashboard/user_list.html', context)
+
+def add_product(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        price = request.POST.get('price')
+        quantity_available = request.POST.get('quantity_available')
+        category_id = request.POST.get('category_id')
+        image = request.FILES.get('image')
+
+        product = Product.objects.create(
+            title=title,
+            description=description,
+            price=price,
+            quantity_available=quantity_available,
+            category_id=category_id,
+            image=image
+        )
+       
+        messages.success(request, 'Product added successfully!')
+
+   
+        return redirect('dash_products')
+
+    return render(request, 'dashboard/products.html')

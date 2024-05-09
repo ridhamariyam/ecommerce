@@ -1,0 +1,54 @@
+
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %} Product Listing {% endblock %}
+{% block content %}
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 2px solid #ccc; /* Outline color */
+    }
+
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        color: #333;
+        font-weight: bold;
+    }
+
+    img {
+        max-width: 100px;
+        height: auto;
+    }
+</style>
+
+<body>
+    <h1>Product Listing</h1>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user_address in users %}
+                        <tr>
+                            <td>{{ user_address.user.username }}</td>
+                            <td>{{ user_address.user.email }}</td>
+                            <td>{{ user_address.street_address }}, {{ user_address.city }}, {{ user_address.country }}</td>
+                        </tr>
+                        {% endfor %}
+        </tbody>
+    </table>
+</body>
+{% endblock %}
+

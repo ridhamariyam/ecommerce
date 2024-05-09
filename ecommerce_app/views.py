@@ -26,16 +26,20 @@ def home(request):
         return render(request, 'home.html', {'products': products})
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
-        return redirect('home')  # Redirect to a fallback page or the same page
+        return redirect('home')  
+    
+def user_order(request):
+    user_orders = Order.objects.filter(user=request.user)
+    return render(request, 'my_orders.html', {'user_orders': user_orders})
 
-def product_list(request):
+def product_lists(request):
     try:
         products = Product.objects.all()
         categories = Category.objects.all()
         return render(request, 'product_list.html', {'products': products, 'categories': categories})
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
-        return redirect('product_list')  # Redirect to a fallback page or the same page
+        return redirect('product_list') 
 
 def product_details(request, product_id):
     try:
@@ -43,7 +47,7 @@ def product_details(request, product_id):
         return render(request, 'product_detail.html', {'product': product})
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
-        return redirect('home')  # Redirect to a fallback page or the home page
+        return redirect('home')  
 
 @login_required
 def add_to_cart(request, product_id):
@@ -56,8 +60,7 @@ def add_to_cart(request, product_id):
         return redirect('product_list')
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
-        return redirect('product_list')  # Redirect to the product list page
-
+        return redirect('product_list')
 # -------------cart--------------------
 
 @login_required
@@ -68,7 +71,7 @@ def view_cart(request):
         return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
-        return redirect('view_cart')  # Redirect to the cart page
+        return redirect('view_cart') 
 
 @login_required
 def update_cart(request, product_id):
@@ -95,7 +98,7 @@ def remove_from_cart(request, product_id):
         return redirect('view_cart')
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
-        return redirect('view_cart')  # Redirect to the cart page
+        return redirect('view_cart')
 
 @login_required
 def select_address_view(request):
@@ -121,14 +124,14 @@ def select_address_view(request):
             if 'address' in request.POST:
                 selected_address_id = request.POST.get('address')
                 if selected_address_id:
-                    # Store the selected address ID in the session
+                   
                     request.session['selected_address_id'] = selected_address_id
                     return redirect('select_payment')
 
         return render(request, 'select_address.html', {'addresses': addresses, 'cart_items': cart_items, 'total_price': total_price})
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
-        return redirect('view_cart')  # Redirect to a fallback page or the cart page
+        return redirect('view_cart')  
 
 @login_required
 def select_payment_view(request):
@@ -146,7 +149,7 @@ def select_payment_view(request):
         return render(request, 'select_payment.html', {'selected_address': selected_address})
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
-        return redirect('view_cart')  # Redirect to a fallback page or the cart page
+        return redirect('view_cart') 
 
 @login_required
 def place_order(request):
@@ -187,7 +190,7 @@ def place_order(request):
         return redirect('confirmation', invoice_number=invoice_number)
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
-        return redirect('view_cart')  # Redirect to a fallback page or the cart page
+        return redirect('view_cart') 
 
 def confirmation(request, invoice_number):
     try:
@@ -215,51 +218,6 @@ def generate_invoice_number():
     return ''.join(random.choices('ABCDEFGHIJK0123456789', k=4))
 
 
-# def generate_pdf_invoice(request, invoice_number):
-#     try:
-#         order = Order.objects.get(invoice_number=invoice_number)
-#         order_items = OrderItem.objects.filter(order=order)
-
-#         response = HttpResponse(content_type='application/pdf')
-#         response['Content-Disposition'] = f'attachment; filename="invoice_{invoice_number}.pdf"'
-
-#         doc = SimpleDocTemplate(response, pagesize=letter)
-#         elements = []
-
-#         # Add more fields from the Order model
-#         data = [['Invoice Number', 'Total Price', 'Status', 'Created At', 'Payment Method', 'Invoice Date']]
-#         data.append([
-#             order.invoice_number,
-#             str(order.total_price),
-#             order.status,
-#             str(order.created_at),
-#             order.payment_method,
-#             str(order.invoice_date)
-#         ])
-
-#         # Add order items
-#         data.append(['Product', 'Quantity', 'Price'])
-#         for item in order_items:
-#             data.append([item.product.title, str(item.quantity), str(item.price_at_purchase)])
-
-#         table = Table(data)
-#         table.setStyle(TableStyle([
-#             ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),  # Header background color
-#             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Header text color
-#             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-#             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-#             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-#             ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-#             ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Add grid lines
-#         ]))
-
-#         elements.append(table)
-#         doc.build(elements)
-#         return response
-#     except Exception as e:
-#         messages.error(request, f"An error occurred: {str(e)}")
-#         return redirect('view_cart')
-
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 from xhtml2pdf import pisa
@@ -269,14 +227,13 @@ def generate_pdf_invoice(request, invoice_number):
         order = Order.objects.get(invoice_number=invoice_number)
         order_items = OrderItem.objects.filter(order=order)
 
-        # Render HTML template to string
+        
         context = {
             'order': order,
             'order_items': order_items,
         }
         html_string = render_to_string('invoice_template.html', context)
 
-        # Generate PDF from HTML string
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="invoice_{invoice_number}.pdf"'
 
@@ -290,5 +247,3 @@ def generate_pdf_invoice(request, invoice_number):
         return redirect('view_cart')
     
     
-def view_account(request):
-    return render(request, 'my_account.html')

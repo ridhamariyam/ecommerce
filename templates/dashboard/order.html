@@ -56,34 +56,25 @@
     <h1 class="mt-5 mb-4">Order List</h1>
     
     <!-- Search Bar and Filter Row -->
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <input type="text" class="form-control" placeholder="Search...">
-        </div>
-        <div class="col-md-2">
-            <button class="btn btn-primary btn-block">Search</button>
-        </div>
-        <div class="col-md-2">
-            <select class="form-control">
-                <option value="">Filter</option>
-                <option value="processing">Processing</option>
-                <option value="completed">Completed</option>
-                <!-- Add more filter options as needed -->
-            </select>
-        </div>
-        <div class="col-md-2">
-            <div class="input-group mb-3">
-                <input type="email" class="form-control" id="emailInput" placeholder="Enter Email Address">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" id="exportButton">Download and Export</button>
-                </div>
+    <form action="{% url 'order' %}" method="GET">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <input type="text" name="q" class="form-control" placeholder="Search by Username or invoice number">
             </div>
-            <div id="message" class="mt-2"></div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-block">Search </button>
+            </div>
+            <div class="col-md-3">
+                <input type="email" class="form-control" id="emailInput" placeholder="Enter Email Address">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-dark btn-block btn-sm" id="exportButton">Download and Export</button>
+            </div>
+            <div class="col-md-1">
+                <div id="message" class="mt-2"></div>
+            </div>
         </div>
-        
-        
-    </div>
-    
+    </form>
 
     <!-- Order Table -->
     <div class="order-box">
@@ -109,7 +100,7 @@
                     <td>{{ order.payment_method }}</td>
                     <td>{{ order.status }}</td>
                     <td>
-                        <div class="dropdown">
+                        {% comment %} <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton{{ order.id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Change Status
                             </button>
@@ -122,7 +113,7 @@
                                     <button type="submit" class="dropdown-item" data-status="Completed">Completed</button>
                                 </form>
                             </div>
-                        </div>
+                        </div> {% endcomment %}
                         
                         <button class="btn btn-primary view-order-btn" onclick="viewOrder(event)" data-order-id="{{ order.id }}">View Order</button>
 

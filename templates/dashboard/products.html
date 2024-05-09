@@ -1,0 +1,209 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %} Product Listing {% endblock %}
+{% block content %}
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 2px solid #ccc; /* Outline color */
+    }
+
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        color: #333;
+        font-weight: bold;
+    }
+
+    img {
+        max-width: 100px;
+        height: auto;
+    }
+
+    .container {
+        position: absolute;
+        top: 50%;
+        right: 10px; /* Adjust as needed */
+        transform: translateY(-50%);
+      }
+      
+      /* Style the button */
+      .button {
+        background-color: #4CAF50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 10px;
+        transition-duration: 0.4s;
+      }
+      
+      /* Button hover effect */
+      .button:hover {
+        background-color: #45a049; /* Darker green */
+      }
+
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+      }
+      
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+        animation-name: modalopen;
+        animation-duration: 0.4s;
+      }
+    
+      @keyframes modalopen {
+        from {opacity: 0}
+        to {opacity: 1}
+      }
+    
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+    
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+</style>
+
+<body>
+    <h1>Product Listing</h1>
+    <table>
+        <div style="float: right;">
+            <button class="button" id="addProductBtn">Add Product</button>
+        </div>
+        {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+        
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Available Quantity</th>
+                <th>Category</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td><img src="{{ product.image.url }}" alt="{{ product.title }}"></td>
+                <td>{{ product.title }}</td>
+                <td>{{ product.description }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.available_quantity }}</td>
+                <td>{{ product.category }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New Product</h2>
+            
+            <form id="addProductForm" method="post" action="{% url 'add_product' %}" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required><br><br>
+                
+                <label for="image">Product Image:</label>
+                <input type="file" id="image" name="image" accept="image/*" required><br><br>
+
+
+                <label for="description">Description:</label><br>
+                <textarea id="description" name="description" rows="4" cols="50" required></textarea><br><br>
+                
+                <label for="price">Price:</label>
+                <input type="text" id="price" name="price" required><br><br>
+                
+                <label for="quantity_available">Available Quantity:</label>
+                <input type="number" id="quantity_available" name="quantity_available" required><br><br>
+                
+                <label for="category">Category:</label>
+                <select id="category" name="category_id" required style="width: 60px;">
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.title }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                
+                <input type="submit" value="Add Product">
+            </form>
+        </div>
+    </div>
+  
+  <script>
+  // Get the modal
+  var modal = document.getElementById("myModal");
+  
+  // Get the button that opens the modal
+  var btn = document.getElementById("addProductBtn");
+  
+  // Get the <span> element that closes the modal
+  var span = document.getElementsByClassName("close")[0];
+  
+  // When the user clicks the button, open the modal
+  btn.onclick = function() {
+    modal.style.display = "block";
+  }
+  
+  // When the user clicks on <span> (x), close the modal
+  span.onclick = function() {
+    modal.style.display = "none";
+  }
+  
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+  </script>
+</body>
+{% endblock %}

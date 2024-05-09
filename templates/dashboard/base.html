@@ -59,16 +59,39 @@
             text-align: center;
             padding: 10px 0;
         }
+
+        .custom-btn {
+            background-color: #dc3545;
+            color: white;
+            border-color: #dc3545;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .custom-btn:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        
     </style>
 </head>
 <body>
     <div class="sidebar">
         <ul>
             <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li><a href="#"><i class="fas fa-users"></i> Users</a></li>
-            <li><a href="#"><i class="fas fa-box-open"></i> Products</a></li>
+            <li><a href="{% url 'users_list' %}"><i class="fas fa-users"></i> Users</a></li>
+            <li><a href="{% url 'dash_products' %}"><i class="fas fa-box-open"></i> Products</a></li>
             <li><a href="{% url 'order' %}"><i class="fas fa-shopping-cart"></i> Orders</a></li>
             <li><a href="#"><i class="fas fa-cogs"></i> Settings</a></li>
+            <li>
+                <a href="{% url 'logout' %}">
+                    <button class="btn btn-outline-danger custom-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </a>
+            </li>
+            
+            
+            
         </ul>
     </div>
     <div class="content">
