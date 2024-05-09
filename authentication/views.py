@@ -6,18 +6,20 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as django_logout
 from .models import Address
 from django.core.exceptions import SuspiciousOperation
+from authentication.models import *
+
+
 
 def signup(request):
-    
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
             return redirect('login')
     else:
-        form = UserCreationForm()
-    return render(request, 'registration/signup.html', {'form': form})
-
+        form = SignUpForm()
+    
+    return render(request, 'registration/signup.html', {'form': form, 'errors': form.errors})
 
 def login(request):
     if request.user.is_authenticated:  

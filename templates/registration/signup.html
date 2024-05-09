@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,29 +62,89 @@
         .form-group {
             margin-bottom: 15px;
         }
+
+        .error-box {
+            border: 1px solid #dc3545; /* Red border */
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f8d7da; /* Light red background */
+        }
+        
+        .error-box ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .error-box li {
+            color: #dc3545; /* Red text color */
+            margin-bottom: 5px;
+        }
+        
+        .error-box li:before {
+            content: "•"; /* Bullet point */
+            margin-right: 5px;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .login-link a {
+            color: #007bff; /* Blue color */
+            text-decoration: none;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
     </style>
 </head>
 <body>
+    {% if error_message %}
+    <div class="error-box">
+        <p class="error-message">{{ error_message }}</p>
+    </div>
+    {% endif %}
     <form method="post">
         {% csrf_token %}
         <h2>Sign Up</h2>
+        {% if errors %}
+            <div class="error-box">
+                <ul>
+                    {% for field, error_list in errors.items %}
+                        {% for error in error_list %}
+                            <li class="error-message">{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
         <div class="form-group">
             {{ form.username.label_tag }}
             {{ form.username }}
         </div>
         <div class="form-group">
-            {{ form.email.label_tag }}
-            {{ form.email }}
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email">
         </div>
         <div class="form-group">
             {{ form.password1.label_tag }}
             {{ form.password1 }}
         </div>
+        
         <div class="form-group">
             {{ form.password2.label_tag }}
             {{ form.password2 }}
         </div>
         <button type="submit">Sign Up</button>
+        <div class="login-link">
+            <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+        </div>
     </form>
+   
 </body>
 </html>
