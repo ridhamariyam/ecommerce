@@ -16,7 +16,9 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from io import BytesIO
-
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from xhtml2pdf import pisa
 
 # Create your views here.
 
@@ -218,9 +220,7 @@ def generate_invoice_number():
     return ''.join(random.choices('ABCDEFGHIJK0123456789', k=4))
 
 
-from django.template.loader import render_to_string
-from django.http import HttpResponse
-from xhtml2pdf import pisa
+
 
 def generate_pdf_invoice(request, invoice_number):
     try:
